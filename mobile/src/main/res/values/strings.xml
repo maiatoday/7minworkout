@@ -165,4 +165,16 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="off">Off</string>
+    <string name="embrionic">Embrionic</string>
+    <string name="prepare">Prepare</string>
+    <string name="creeping">creeping</string>
+    <string name="crawling">crawling</string>
+    <string name="standing">standing</string>
+    <string name="walking">walking</string>
+    <string name="updown">up and down</string>
+    <string name="laughing">laughing</string>
+    <string name="stop">Stop</string>
+    <string name="go">Go</string>
+    <string name="almost_done">almost done</string>
 </resources>
