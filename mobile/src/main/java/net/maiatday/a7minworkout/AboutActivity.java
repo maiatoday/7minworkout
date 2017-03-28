@@ -1,5 +1,7 @@
 package net.maiatday.a7minworkout;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -26,4 +28,7 @@ public class AboutActivity extends AppCompatActivity {
         });
     }
 
+    public static Intent newIntent(Context context) {
+        return new Intent(context, AboutActivity.class);
+    }
 }
