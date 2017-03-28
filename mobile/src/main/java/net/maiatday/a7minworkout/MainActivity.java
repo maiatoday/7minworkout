@@ -176,9 +176,9 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
             if (warnTone != null) {
                 warnTone.play();
             }
-        }
-        if (mustWarnVibrate) {
-            vibrator.vibrate(100);
+            if (mustWarnVibrate) {
+                vibrator.vibrate(100);
+            }
         }
         nextText.setText(upNext);
     }
@@ -189,9 +189,9 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
             if (changeTone != null) {
                 changeTone.play();
             }
-        }
-        if (mustChangeVibrate) {
-            vibrator.vibrate(300);
+            if (mustChangeVibrate) {
+                vibrator.vibrate(300);
+            }
         }
     }
 }
