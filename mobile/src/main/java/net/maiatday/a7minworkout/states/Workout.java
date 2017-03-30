@@ -73,6 +73,10 @@ public class Workout implements VP.Action {
         return state.hasTimer();
     }
 
+    public void complete() {
+        update.onComplete();
+    }
+
     class StateCountDownTimer extends CountDownTimer {
         State currentState;
 
@@ -90,14 +94,14 @@ public class Workout implements VP.Action {
             long seconds = l / 1000;
             update.setSecondsLeft(seconds);
             if (seconds == currentState.getWarningS()) {
-                update.notifyWarning(currentState.getNextString(context));
+                update.onWarn(currentState.getNextString(context));
             }
             currentState.onTick(l);
         }
 
         @Override
         public void onFinish() {
-            update.notifyFinish();
+            update.onChange();
             currentState.onFinish();
         }
     }

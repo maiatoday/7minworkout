@@ -17,7 +17,8 @@ public interface VP {
         void setStatusImage(int id);
         void setSecondsLeft(long seconds);
         void setStarted(boolean started);
-        void notifyWarning(String upNext);
-        void notifyFinish();
+        void onWarn(String upNext);
+        void onChange();
+        void onComplete();
     }
 }
