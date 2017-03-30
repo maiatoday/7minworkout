@@ -21,8 +21,17 @@ import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import net.maiatday.a7minworkout.model.Record;
+import net.maiatday.a7minworkout.model.Streak;
 import net.maiatday.a7minworkout.states.VP;
 import net.maiatday.a7minworkout.states.Workout;
+
+import java.util.Date;
+import java.util.UUID;
+
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmObject;
 
 public class MainActivity extends AppCompatActivity implements VP.Update {
 
@@ -44,18 +53,46 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
     boolean mustChangeVibrate = false;
     Ringtone changeTone;
     private FirebaseAnalytics analytics;
+    private boolean mustTrackStreak;
+    private boolean mustTrackHistory;
 
+    private TextView streakText;
+    private TextView streakLabel;
+
+    Realm realm;
+    Streak streak;
+    private RealmChangeListener<Streak> streakListener = new RealmChangeListener<Streak>() {
+        @Override
+        public void onChange(Streak element) {
+            showStreakUI(element.getStreak());
+        }
+    };
+
+    private void showStreakUI(int streakVal) {
+        if (mustTrackHistory && mustTrackStreak) {
+            //Show streak
+            streakLabel.setVisibility(View.VISIBLE);
+            streakText.setVisibility(View.VISIBLE);
+            streakText.setText(String.valueOf(streakVal));
+        } else {
+            streakLabel.setVisibility(View.GONE);
+            streakText.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         analytics = FirebaseAnalytics.getInstance(this);
+        setupRealm();
         setContentView(R.layout.activity_main);
         image = (ImageView) findViewById(R.id.imageView);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         statusText = (TextView) findViewById(R.id.status_text);
         secondsText = (TextView) findViewById(R.id.seconds_text);
         nextText = (TextView) findViewById(R.id.next_text);
+        streakText = (TextView) findViewById(R.id.streak_text);
+        streakLabel = (TextView) findViewById(R.id.streak_label);
         button = (Button) findViewById(R.id.button_go);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
         });
         workout = new Workout(this, this);
         setValuesFromSettings();
+        showStreakUI(streak.getStreak());
     }
 
     @Override
@@ -95,12 +133,12 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
             case R.id.action_settings:
                 showSettings();
                 return true;
-//            case R.id.action_history:
-//                showHistory();
-//                return true;
-//            case R.id.action_about:
-//                showAbout();
-//                return true;
+            case R.id.action_history:
+                showHistory();
+                return true;
+            case R.id.action_about:
+                showAbout();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -111,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
         if (requestCode == REQUEST_SETTINGS) {
             workout.stop();
             setValuesFromSettings();
+            showStreakUI(streak.getStreak());
         }
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -137,6 +176,9 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
             Uri uri = Uri.parse(ringtoneWarn);
             warnTone = RingtoneManager.getRingtone(this, uri);
         }
+        mustTrackStreak = prefs.getBoolean("record_streak", true);
+        mustTrackHistory = prefs.getBoolean("record_history", true);
+
     }
 
     private void showAbout() {
@@ -213,5 +255,49 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "workout");
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "none");
         analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        if (mustTrackHistory) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    String uuid = UUID.randomUUID().toString();
+                    Record r = realm.createObject(Record.class, uuid);
+                    r.setTimeStamp(new Date());
+                    Streak s = realm.where(Streak.class).findFirst();
+                    if (mustTrackStreak) {
+                        Record previous = s.getLastWorkout();
+                        if (previous != null) {
+                            long diff = previous.getTimeStamp().getTime() - r.getTimeStamp().getTime();
+                            long diffSeconds = diff / 1000 % 60;
+                            if (diffSeconds <= 24 * 60 * 60) {
+                                s.setStreak(s.getStreak() + 1);
+                            } else {
+                                s.setStreak(0);
+                            }
+                        } else {
+                            s.setStreak(1);
+                        }
+                    }
+                    s.setLastWorkout(r);
+                }
+            });
+        }
+
+    }
+
+    private void setupRealm() {
+        realm = Realm.getDefaultInstance();
+        streak = realm.where(Streak.class).findFirst();
+        if (streak == null) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    Streak s = realm.createObject(Streak.class);
+                    s.setStreak(0);
+                }
+            });
+        }
+        streak = realm.where(Streak.class).findFirst();
+        RealmObject.addChangeListener(streak, streakListener);
+
     }
 }
