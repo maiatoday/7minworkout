@@ -53,6 +53,7 @@ class LaughingState implements State {
     @Override
     public void onFinish() {
         workout.setState(workout.offState);
+        workout.complete();
     }
 
 

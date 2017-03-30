@@ -7,7 +7,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,10 +19,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import net.maiatday.a7minworkout.states.VP;
 import net.maiatday.a7minworkout.states.Workout;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements VP.Update {
 
@@ -44,24 +43,36 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
     boolean mustChange = false;
     boolean mustChangeVibrate = false;
     Ringtone changeTone;
+    private FirebaseAnalytics analytics;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        analytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_main);
         image = (ImageView) findViewById(R.id.imageView);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         statusText = (TextView) findViewById(R.id.status_text);
         secondsText = (TextView) findViewById(R.id.seconds_text);
         nextText = (TextView) findViewById(R.id.next_text);
-        button = (Button) findViewById(R.id.button2);
+        button = (Button) findViewById(R.id.button_go);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (workout.running()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "workout_stop");
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "workout");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "none");
+                    analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                     workout.stop();
                 } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "workout_start");
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "workout");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "none");
+                    analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                     workout.start();
                 }
             }
@@ -171,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
     }
 
     @Override
-    public void notifyWarning(String upNext) {
+    public void onWarn(String upNext) {
         if (mustWarn) {
             if (warnTone != null) {
                 warnTone.play();
@@ -184,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
     }
 
     @Override
-    public void notifyFinish() {
+    public void onChange() {
         if (mustChange) {
             if (changeTone != null) {
                 changeTone.play();
@@ -193,5 +204,14 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
                 vibrator.vibrate(300);
             }
         }
+    }
+
+    @Override
+    public void onComplete() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "workout_complete");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "workout");
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "none");
+        analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }
