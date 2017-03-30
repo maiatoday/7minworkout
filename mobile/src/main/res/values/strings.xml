@@ -122,4 +122,10 @@
     <string name="pref_title_warning_notifications">Warning notification</string>
     <string name="pref_title_warn_ringtone">Warn ringtone</string>
     <string name="pref_title_warn_vibrate">Warn vibrate</string>
+    <string name="pref_record_history">Record history</string>
+    <string name="pref_track_streak">Track streak</string>
+    <string name="pref_header_history">History</string>
+    <string name="about_title">Nia 7 min workout</string>
+    <string name="about_text"><![CDATA[This app is an aid to time the changes of the Nia 7 minute workout. It consists of a minute each of the Nia 5 stages followed by 1 minute up and down and one minute of laughing. More information about the 5 stages at <a href="http://nianow.com">Nia website</a> or a <a href="https://youtu.be/FO0x55kbSOQ">video</a>  The up down instructions are to transition from standing to on the ground and up again as many times as possible in a minute. The laughing instructions are laugh even if you have to force it initially, 15 sec on belly, 15 sec on back, 15 sec sitting 15 sec standing. Need inspiration, try this <a href="https://www.youtube.com/watch?v=kHnRIAVXTMQ>video</a>]]></string>
+    <string name="streak">Streak</string>
 </resources>

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 if (project.hasProperty("a7min.signing")
         && new File(project.property("a7min.signing") + ".gradle").exists()) {
@@ -6,12 +7,12 @@ if (project.hasProperty("a7min.signing")
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion sdkVersion
+    buildToolsVersion buildTools
     defaultConfig {
         applicationId "net.maiatday.a7minworkout"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion sdkVersion
         versionCode 2
         versionName "0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -34,13 +35,17 @@ dependencies {
     })
 //    wearApp project(':wear')
 //    compile 'com.google.android.gms:play-services-wearable:10.2.0'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:support-vector-drawable:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
-    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
+    compile "com.android.support.constraint:constraint-layout:1.0.1"
+    compile "com.android.support:support-v4:${supportLibraryVersion}"
+    compile "com.android.support:support-vector-drawable:${supportLibraryVersion}"
+    compile "com.android.support:design:${supportLibraryVersion}"
+    compile "com.google.firebase:firebase-crash:${firebaseVersion}"
+    compile "com.google.firebase:firebase-core:${firebaseVersion}"
+    compile "io.realm:android-adapters:${realmAdapterVersion}"
+    annotationProcessor 'dk.ilios:realmfieldnameshelper:1.1.1'
+    compile 'com.facebook.stetho:stetho:1.4.2'
+    compile 'com.uphyca:stetho_realm:2.0.0'
     testCompile 'junit:junit:4.12'
 }
 
