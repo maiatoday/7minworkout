@@ -8,16 +8,16 @@
         android:title="@string/action_settings"
         android:icon="@drawable/ic_settings"
         app:showAsAction="ifRoom"/>
-    <!--<item-->
-        <!--android:id="@+id/action_history"-->
-        <!--android:orderInCategory="100"-->
-        <!--android:title="@string/action_history"-->
-        <!--android:icon="@drawable/ic_history"-->
-        <!--app:showAsAction="never"/>-->
+    <item
+        android:id="@+id/action_history"
+        android:orderInCategory="100"
+        android:title="@string/action_history"
+        android:icon="@drawable/ic_history"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_about"
         android:orderInCategory="100"
         android:title="@string/action_about"
         android:icon="@drawable/ic_help_outline"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 </menu>

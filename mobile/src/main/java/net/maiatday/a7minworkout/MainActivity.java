@@ -133,9 +133,9 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
             case R.id.action_settings:
                 showSettings();
                 return true;
-//            case R.id.action_history:
-//                showHistory();
-//                return true;
+            case R.id.action_history:
+                showHistory();
+                return true;
             case R.id.action_about:
                 showAbout();
                 return true;
@@ -193,14 +193,13 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
     }
 
     private void showHistory() {
-
+        workout.stop();
         startActivity(HistoryActivity.newIntent(this));
     }
 
     private void showSettings() {
         workout.stop();
         startActivityForResult(SettingsActivity.newIntent(this), REQUEST_SETTINGS);
-
     }
 
 
