@@ -133,9 +133,9 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
             case R.id.action_settings:
                 showSettings();
                 return true;
-            case R.id.action_history:
-                showHistory();
-                return true;
+//            case R.id.action_history:
+//                showHistory();
+//                return true;
             case R.id.action_about:
                 showAbout();
                 return true;
@@ -179,6 +179,13 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
         mustTrackStreak = prefs.getBoolean("record_streak", true);
         mustTrackHistory = prefs.getBoolean("record_history", true);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RealmObject.removeAllChangeListeners(streak);
+        realm.close();
     }
 
     private void showAbout() {
@@ -268,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements VP.Update {
                         if (previous != null) {
                             long diff = previous.getTimeStamp().getTime() - r.getTimeStamp().getTime();
                             long diffSeconds = diff / 1000 % 60;
-                            if (diffSeconds <= 24 * 60 * 60) {
+                            if (diffSeconds < 48 * 60 * 60) {
                                 s.setStreak(s.getStreak() + 1);
                             } else {
                                 s.setStreak(0);
